@@ -28,7 +28,7 @@ services:
       args:
         API_BASE_URL: http://127.0.0.1:8081/
     ports:
-      - 80818081
+      - 8081:8081
     depends_on:
       - db
     networks:
