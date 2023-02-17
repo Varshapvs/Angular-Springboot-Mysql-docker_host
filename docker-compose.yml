@@ -1,41 +1,25 @@
-version: '3.7'
+version: '3'
 
 services:
- # App backend service
-  app-server:
-    # Configuration for building the docker image for the backend service
-    build:
-      context: Springboot
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
-    restart: always
-    depends_on: 
-      - db # This service depends on mysql. Start that first.
-    environment: # Pass environment variables to the service
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/testapp?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: supersecret  
-    networks: # Networks to join (Services on the same network can communicate with each other using their name)
-      - backend
-      - frontend
-      
   db:
-    image: mysql:8.0
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       MYSQL_DATABASE: testapp
-      MYSQL_USER: root
-      MYSQL_PASSWORD: supersecret
       MYSQL_ROOT_PASSWORD: supersecret
     ports:
       - '3306:3306'
-    networks:
-      - backend 
-  
-  
-  #frontend
-    angular:
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  angular:
     build:
       context: AngularDocker # Use an image built from the specified dockerfile in the `angular-11-social-login` directory.
       dockerfile: Dockerfile
@@ -44,11 +28,15 @@ services:
     ports:
       - "4200:80" # Map the exposed port 80 on the container to port 4200 on the host machine
     restart: always
-    depends_on:
-      - app-server
+    #depends_on:
+      #- app-server
     networks:
-      - frontend
+      - frontendNetwork
 
+
+volumes:
+  mysql-data:
+  
 networks:
-  backend:
-  frontend:
+  backendNetwork:
+  frontendNetwork:
