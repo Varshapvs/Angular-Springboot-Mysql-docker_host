@@ -9,17 +9,17 @@ services:
       #MYSQL_DATABASE: testapp
       #MYSQL_ROOT_PASSWORD: supersecret
     #ports:
-      - '3306:3306'
+      #- '3306:3306'
     #volumes:
-      - mysql-data:/var/lib/mysql
+      #- mysql-data:/var/lib/mysql
     #networks:
-      - backendNetwork
+      #- backendNetwork
       
   #adminer:
     #image: adminer
     #restart: always
     #ports:
-      - 8080:8080
+     # - 8080:8080
   db:
     image: mcr.microsoft.com/mssql/server:W2CDBW0008905.corp.heb.com
     container_name: sqlserver
@@ -27,6 +27,7 @@ services:
       - "1433:1433"
     restart: always
     environment:
+     SA_DATABASE: "cProductRecall"
      SA_USERNAME: "recalluser"
      SA_PASSWORD: "recalluser1"
      
